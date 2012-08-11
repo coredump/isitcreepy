@@ -42,8 +42,8 @@ func index(w http.ResponseWriter, r *http.Request) {
 	}{ages}
 
 	if err := indexTpl.Execute(w, tpldata); err != nil {
-		http.Error(w, "nope", http.StatusInternalServerError)
-		panic("what")
+		log.Printf("%v - %v - %v - Index template execution failed", r.RemoteAddr, r.Method, r.URL)
+		http.Error(w, "Index template execution failed", http.StatusInternalServerError)
 	}
 
 }
@@ -53,7 +53,8 @@ func calc(w http.ResponseWriter, r *http.Request) {
 
 	value, err := strconv.ParseFloat(strings.TrimLeft(r.URL.Path, "/calc/"), 64)
 	if err != nil {
-		log.Panicf("Wrong data on URL: %v", err)
+		log.Printf("Wrong data on URL: %v - %v", r.URL, err)
+		http.Error(w, "Wrong data on the URL", http.StatusInternalServerError)
 	}
 	min, max := ages(value)
 	result := struct {
@@ -63,7 +64,8 @@ func calc(w http.ResponseWriter, r *http.Request) {
 
 	j, err := json.Marshal(result)
 	if err != nil {
-		log.Panic("Error marshaling data")
+		log.Printf("Error marshaling the JSON data")
+		http.Error(w, "Internal marshaling error", http.StatusInternalServerError)
 	}
 	fmt.Fprint(w, string(j))
 }
@@ -76,22 +78,27 @@ var indexTpl = template.Must(template.New("").Parse(`
   <script type="text/javascript" src="/assets/isitcreepy.js"></script>
   <script type="text/javascript" src="/assets/jquery-ui-1.8.22.custom.min.js"></script>
   <style type="text/css">
-    body { background-color: white; font-family: 'Helvetica, Arial, sans'}
-    #results { display: inline-block; align: "center" }
+    body { text-align: center; background-color: white; font-family: 'Helvetica, Arial, sans'}
+    div#results { text-align: left; display: inline-block; align: "center" }
+    div#content { width: 740px; margin-left: auto; margin-right: auto; }
+    div#selector { text-align: left; }
   </style>
 <title>Is it creepy?</title>
 <body>
-<h1>Is it creepy? (To date that person)</h1>
-<img src="http://imgs.xkcd.com/comics/dating_pools.png">
-<div>
-<p>Select your age: <select id="age_selector">
-{{ range .Ages }}
-<option>{{ . }}</option>
-{{ end }}
-</select>
-</p>
-<div id="results">
-</div>
+<div id="content">
+  <h1>Is it creepy? (To date that person)</h1>
+  <img src="http://imgs.xkcd.com/comics/dating_pools.png">
+  <div id="selector">
+    <p>Select your age: <select id="age_selector">
+    {{ range .Ages }}
+    <option>{{ . }}</option>
+    {{ end }}
+    </select>
+    </p>
+  </div>
+  <div id="results">
+  </div>
+<a href="https://github.com/coredump/isitcreepy"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub"></a>
 </div>
 </body>
 </html>
