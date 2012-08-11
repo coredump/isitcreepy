@@ -44,6 +44,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 	if err := indexTpl.Execute(w, tpldata); err != nil {
 		log.Printf("%v - %v - %v - Index template execution failed", r.RemoteAddr, r.Method, r.URL)
 		http.Error(w, "Index template execution failed", http.StatusInternalServerError)
+		return
 	}
 
 }
@@ -55,6 +56,7 @@ func calc(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("Wrong data on URL: %v - %v", r.URL, err)
 		http.Error(w, "Wrong data on the URL", http.StatusInternalServerError)
+		return
 	}
 	min, max := ages(value)
 	result := struct {
@@ -66,6 +68,7 @@ func calc(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("Error marshaling the JSON data")
 		http.Error(w, "Internal marshaling error", http.StatusInternalServerError)
+		return
 	}
 	fmt.Fprint(w, string(j))
 }
