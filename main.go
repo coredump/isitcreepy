@@ -15,6 +15,7 @@ func main() {
 
 	http.HandleFunc("/", index)
 	http.HandleFunc("/calc/", calc)
+	http.HandleFunc("/stats/", stats)
 	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets"))))
 
 	log.Println("Starting server")
@@ -33,8 +34,8 @@ func ages(age float64) (float64, float64) {
 func index(w http.ResponseWriter, r *http.Request) {
 	logreq(r)
 
-	ages := make([]int, 66)
-	for i := 0; i < 66; i++ {
+	ages := make([]int, 67)
+	for i := 0; i <= 66; i++ {
 		ages[i] = i + 14
 	}
 	tpldata := struct {
@@ -66,9 +67,32 @@ func calc(w http.ResponseWriter, r *http.Request) {
 
 	j, err := json.Marshal(result)
 	if err != nil {
-		log.Printf("Error marshaling the JSON data")
+		log.Printf("Error marshaling the JSON data: %v", err)
 		http.Error(w, "Internal marshaling error", http.StatusInternalServerError)
 		return
+	}
+	fmt.Fprint(w, string(j))
+}
+
+func stats(w http.ResponseWriter, r *http.Request) {
+	logreq(r)
+
+	maxcoords := make([][]float64, 100)
+	mincoords := make([][]float64, 100)
+	for i := 0; i < 86; i++ {
+		z := i + 14
+		min, max := ages(float64(z))
+		maxcoords[i] = []float64{float64(z), max}
+		mincoords[i] = []float64{float64(z), min}
+	}
+
+	j, err := json.Marshal(struct {
+		Min [][]float64
+		Max [][]float64
+	}{mincoords, maxcoords})
+	if err != nil {
+		log.Printf("Error marshalling the JSON data: %v", err)
+		http.Error(w, "Internal marshalling error", http.StatusInternalServerError)
 	}
 	fmt.Fprint(w, string(j))
 }
@@ -77,14 +101,18 @@ var indexTpl = template.Must(template.New("").Parse(`
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-  <script type="text/javascript" src="/assets/isitcreepy.js"></script>
-  <script type="text/javascript" src="/assets/jquery-ui-1.8.22.custom.min.js"></script>
+  <script language="javascript" type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+  <script language="javascript" type="text/javascript" src="/assets/jquery-ui-1.8.22.custom.min.js"></script>
+  <script language="javascript" type="text/javascript" src="/assets/isitcreepy.js"></script>
+  <script language="javascript" type="text/javascript" src="/assets/flot/jquery.flot.js"></script>
+  <script language="javascript" type="text/javascript" src="/assets/jquery.flot.axislabels.js"></script>
   <style type="text/css">
-    body { text-align: center; background-color: white; font-family: 'Helvetica, Arial, sans'}
+    body { text-align: center; background-color: white; font-family: Helvetica, Arial, sans-serif}
     div#results { text-align: left; display: inline-block; align: "center" }
     div#content { width: 740px; margin-left: auto; margin-right: auto; }
-    div#selector { text-align: left; }
+    div#selector { text-align: left; font-size: 20px}
+    div#graphexplain { text-align: left; }
+    div#placeholder { width: 740px; height: 400px; text-align: left }
   </style>
 <title>Is it creepy?</title>
 <body>
@@ -100,6 +128,11 @@ var indexTpl = template.Must(template.New("").Parse(`
     </p>
   </div>
   <div id="results">
+  <p><em>Notice that it stops at 80. Not because I think that anyone must stop dating at 80 or any age, it's just for the sake of better data visualization.</em></p>
+  </div>
+  <div id="placeholder">
+  </div>
+  <div id="graphexplain">
   </div>
 <a href="https://github.com/coredump/"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub"></a>
 </div>
