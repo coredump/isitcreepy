@@ -118,7 +118,7 @@ var indexTpl = template.Must(template.New("").Parse(`
 <body>
 <div id="content">
   <h1>Is it creepy? (To date that person)</h1>
-  <img src="http://imgs.xkcd.com/comics/dating_pools.png">
+  <a href="http://xkcd.com/314/"><img src="http://imgs.xkcd.com/comics/dating_pools.png"></a>
   <div id="selector">
     <p>Select your age: <select id="age_selector">
     {{ range .Ages }}
