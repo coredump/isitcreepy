@@ -107,12 +107,13 @@ var indexTpl = template.Must(template.New("").Parse(`
   <script language="javascript" type="text/javascript" src="/assets/flot/jquery.flot.js"></script>
   <script language="javascript" type="text/javascript" src="/assets/jquery.flot.axislabels.js"></script>
   <style type="text/css">
-    body { text-align: center; background-color: white; font-family: Helvetica, Arial, sans-serif}
+    body { text-align: center; background-color: white; font-family: Helvetica, Arial, sans-serif; height:100%; margin: 0; padding: 0; }
     div#results { text-align: left; display: inline-block; align: "center" }
     div#content { width: 740px; margin-left: auto; margin-right: auto; }
     div#selector { text-align: left; font-size: 20px}
     div#graphexplain { text-align: left; }
     div#placeholder { width: 740px; height: 400px; text-align: left }
+    div#footer {width: 740px; position:absolute; bottom:0; width:100%; height:60px; font-size: 14px }
   </style>
 <title>Is it creepy?</title>
 <body>
@@ -136,6 +137,7 @@ var indexTpl = template.Must(template.New("").Parse(`
   </div>
 <a href="https://github.com/coredump/"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub"></a>
 </div>
+<div id="footer">There's a blog post about this page <a href="http://coredump.io/blog/2012/08/13/learning-go-lang/">here</a></div>
 </body>
 </html>
 `))
