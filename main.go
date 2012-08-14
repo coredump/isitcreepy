@@ -99,21 +99,29 @@ func stats(w http.ResponseWriter, r *http.Request) {
 
 var indexTpl = template.Must(template.New("").Parse(`
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" itemscope itemtype="http://schema.org/Blog">
 <head>
+  <meta itemprop="name" content="Is it creepy?">
+  <meta itemprop="description" content="What is your non creepy age range for dating? Check here.">
+  <meta name="descriotion" content="Is it creepy to date that person? It depends on your age!">
   <script language="javascript" type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
   <script language="javascript" type="text/javascript" src="/assets/jquery-ui-1.8.22.custom.min.js"></script>
   <script language="javascript" type="text/javascript" src="/assets/isitcreepy.js"></script>
   <script language="javascript" type="text/javascript" src="/assets/flot/jquery.flot.js"></script>
   <script language="javascript" type="text/javascript" src="/assets/jquery.flot.axislabels.js"></script>
+  <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
   <style type="text/css">
     body { text-align: center; background-color: white; font-family: Helvetica, Arial, sans-serif; height:100%; margin: 0; padding: 0; }
-    div#results { text-align: left; display: inline-block; align: "center" }
+    div#results { text-align: left; display: inline; align: "center" }
     div#content { width: 740px; margin-left: auto; margin-right: auto; }
     div#selector { text-align: left; font-size: 20px}
     div#graphexplain { text-align: left; }
     div#placeholder { width: 740px; height: 400px; text-align: left }
     div#footer {width: 740px; position:absolute; bottom:0; width:100%; height:60px; font-size: 14px }
+    div#share {width: 300px; text-align: center; height: 24px; margin-left: auto; margin-right: auto; margin-bottom: 10px}
+    div#fb_button {width: 100px; float:left}
+    div#tweet_button {width: 100px; float:left}
+    div#gplus_button {width: 100px; float:left}
   </style>
 <title>Is it creepy?</title>
 <body>
@@ -129,15 +137,20 @@ var indexTpl = template.Must(template.New("").Parse(`
     </p>
   </div>
   <div id="results">
-  <p><em>Notice that it stops at 80. Not because I think that anyone must stop dating at 80 or any age, it's just for the sake of better data visualization.</em></p>
+    <p><em>Notice that it stops at 80. Not because I think that anyone must stop dating at 80 or any age, it's just for the sake of better data visualization.</em></p>
   </div>
-  <div id="placeholder">
+  <div id="share">
+    <div id="tweet_button"></div>
+    <div id="fb_button"></div>
+    <div id="gplus_button"></div>
   </div>
-  <div id="graphexplain">
-  </div>
-<a href="https://github.com/coredump/"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub"></a>
+  <div id="placeholder"></div>
+  <div id="graphexplain"></div>
+  <a href="https://github.com/coredump/"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub"></a>
 </div>
-<div id="footer">There's a blog post about this page <a href="http://coredump.io/blog/2012/08/13/learning-go-lang/">here</a></div>
+<div id="footer">
+  <p>There's a blog post about this page <a href="http://coredump.io/blog/2012/08/13/learning-go-lang/">here</a></p>
+</div>
 </body>
 </html>
 `))
